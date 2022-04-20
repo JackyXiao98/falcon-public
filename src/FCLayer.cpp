@@ -30,7 +30,7 @@ void FCLayer::initialize()
 		temp[i] = (float)(rand() % (higher - lower) + lower)/decimation;
 		
 		if (partyNum == PARTY_A){
-			weights[i].first = floatToMyType(temp[i]);
+			weights[i].first  = floatToMyType(temp[i]);
 			weights[i].second = 0;
 		}
 		
@@ -82,8 +82,8 @@ void FCLayer::computeDelta(RSSVectorMyType& prevDelta)
 	log_print("FC.computeDelta");
 
 	//Back Propagate	
-	size_t rows = conf.batchSize;
-	size_t columns = conf.inputDim;
+	size_t rows       = conf.batchSize;
+	size_t columns    = conf.inputDim;
 	size_t common_dim = conf.outputDim;
 	
 	if (FUNCTION_TIME)
@@ -97,10 +97,10 @@ void FCLayer::updateEquations(const RSSVectorMyType& prevActivations)
 {
 	log_print("FC.updateEquations");
 
-	size_t rows = conf.batchSize;
-	size_t columns = conf.outputDim;
+	size_t rows       = conf.batchSize;
+	size_t columns    = conf.outputDim;
 	size_t common_dim = conf.inputDim;
-	size_t size = rows*columns;	
+	size_t size       = rows*columns;
 	RSSVectorMyType temp(columns, std::make_pair(0,0));
 
 	//Update Biases
@@ -112,10 +112,10 @@ void FCLayer::updateEquations(const RSSVectorMyType& prevActivations)
 	subtractVectors<RSSMyType>(biases, temp, biases, columns);
 
 	//Update Weights 
-	rows = conf.inputDim;
-	columns = conf.outputDim;
+	rows       = conf.inputDim;
+	columns    = conf.outputDim;
 	common_dim = conf.batchSize;
-	size = rows*columns;
+	size       = rows*columns;
 	RSSVectorMyType deltaWeight(size);
 
 	if (FUNCTION_TIME)
