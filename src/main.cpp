@@ -7,6 +7,7 @@
 #include "NeuralNetConfig.h"
 #include "NeuralNetwork.h"
 #include "unitTests.h"
+#include "Functionalities.h"
 
 
 int partyNum;
@@ -86,6 +87,17 @@ int main(int argc, char** argv)
 
 	printNetwork(net);
 
+
+/****************************** DEBUG ******************************/ 
+	cout << "#############################################################" << endl;
+	cout << "####################### Now debugging #######################" << endl;
+	cout << "#############################################################" << endl;
+
+	cout << BIT_SIZE << endl;
+	debugPC();
+	// debugMatMul();
+
+
 /****************************** CLEAN-UP ******************************/ 
 	delete aes_indep;
 	delete aes_next;
@@ -93,6 +105,7 @@ int main(int argc, char** argv)
 	delete config;
 	delete net;
 	deleteObjects();
+
 
 	return 0;
 }

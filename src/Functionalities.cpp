@@ -1174,6 +1174,9 @@ void funcPrivateCompare(const RSSVectorSmallType &share_m, const vector<myType> 
 		for (int index2 = 0; index2 < size; ++index2)
 		{
 			//Computing 2Beta-1
+			// (-1)^{beta}  = 1 - 2*beta, calculate 2*beta - 1
+			// in beta it's like 0->1, 1->0, which is still random.
+			// TODO add, subtract on Zp, precompute to speedup
 			twoBetaMinusOne[index2*BIT_SIZE] = subConstModPrime(beta[index2], 1);
 			twoBetaMinusOne[index2*BIT_SIZE] = addModPrime(twoBetaMinusOne[index2*BIT_SIZE], beta[index2]);
 
@@ -1191,6 +1194,7 @@ void funcPrivateCompare(const RSSVectorSmallType &share_m, const vector<myType> 
 		}
 
 		//(-1)^beta * x[i] - r[i]
+		// (x[i]-r[i]) * (2*beta-1)
 		funcDotProduct(diff, twoBetaMinusOne, xMinusR, sizeLong);
 
 		for (int index2 = 0; index2 < size; ++index2)
@@ -1228,10 +1232,10 @@ void funcPrivateCompare(const RSSVectorSmallType &share_m, const vector<myType> 
 		}
 	}
 
-	RSSVectorSmallType temp_a(sizeLong/2), temp_b(sizeLong/2), temp_c(sizeLong/2);
-	vector<smallType> temp_d(sizeLong/2);
-	if (SECURITY_TYPE.compare("Malicious") == 0)
-		funcCheckMaliciousDotProd(temp_a, temp_b, temp_c, temp_d, sizeLong/2);
+	// RSSVectorSmallType temp_a(sizeLong/2), temp_b(sizeLong/2), temp_c(sizeLong/2);
+	// vector<smallType> temp_d(sizeLong/2);
+	// if (SECURITY_TYPE.compare("Malicious") == 0)
+	// 	funcCheckMaliciousDotProd(temp_a, temp_b, temp_c, temp_d, sizeLong/2);
 
 	//TODO 7 rounds of multiplication
 	// cout << "CM: \t\t" << funcTime(funcCrunchMultiply, c, betaPrime, size, dim) << endl;
@@ -1793,6 +1797,7 @@ void debugPC()
 
 	RSSVectorSmallType beta(size), shares_m(sizeLong);
 	vector<smallType> reconst_betaP(size), betaPrime(size);
+	// TODO implement it
 	funcGetShares(beta, plain_beta);
 
 	vector<smallType> bits_of_m(sizeLong);
@@ -1801,9 +1806,10 @@ void debugPC()
 			bits_of_m[i*BIT_SIZE + j] = (smallType)((plain_m[i] >> (BIT_SIZE-1-j)) & 1);
 
 	funcGetShares(shares_m, bits_of_m);
+	// plain_r is public
 	funcPrivateCompare(shares_m, plain_r, beta, betaPrime, size);
 	
-#if (!LOG_DEBUG)
+// #if (!LOG_DEBUG)
 	cout << "BetaPrime: \t ";
 	for (int i = 0; i < size; ++i)
 		cout << (int)betaPrime[i] << " ";
@@ -1824,7 +1830,7 @@ void debugPC()
 	for (int i = 0; i < size; ++i)
 		cout << (int)plain_m[i] - (int)plain_r[i] << " ";
 	cout << endl;
-#endif
+// #endif
 }
 
 void debugWrap()

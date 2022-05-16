@@ -86,7 +86,6 @@ command: Falcon.out ## Run this to use the run parameters specified in the makef
 	./Falcon.out 0 files/IP_$(RUN_TYPE) files/keyA files/keyAB files/keyAC $(NETWORK) $(DATASET) $(SECURITY) 
 	@echo "Execution completed"
 
-
 ################################## tmux runs ############################################
 zero: Falcon.out ## Run this to only execute Party 0 (useful for multiple terminal runs)
 	./Falcon.out 0 files/IP_$(RUN_TYPE) files/keyA files/keyAB files/keyAC 

@@ -18,12 +18,12 @@
 
 
 /********************* AES and other globals *********************/
-#define LOG_DEBUG false
+#define LOG_DEBUG True
 #define LOG_DEBUG_NETWORK false
 #define FUNCTION_TIME false
 #define RANDOM_COMPUTE 256	//Size of buffer for random elements
 #define STRING_BUFFER_SIZE 256
-#define PARALLEL true
+#define PARALLEL false
 #define NO_CORES 8
 
 
