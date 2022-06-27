@@ -1321,9 +1321,9 @@ void funcWrap(const RSSVectorMyType &a, RSSVectorSmallType &theta, size_t size)
 	vector<myType> reconst_x(size);
 
 	PrecomputeObject.getShareConvertObjects(r, shares_r, alpha, size);
-	printArray(r, "r");
-	printArray(shares_r, "shares_r");
-	printArray(alpha, "alpha");
+	// printArray(r, "r");
+	// printArray(shares_r, "shares_r");
+	// printArray(alpha, "alpha");
 
 	// Step 1: x = a + r
 	// here x and r are reversed
@@ -1336,7 +1336,7 @@ void funcWrap(const RSSVectorMyType &a, RSSVectorSmallType &theta, size_t size)
 		x[i].first = a[i].first + r[i].first;
 		x[i].second = a[i].second + r[i].second;
 	}
-	printArray(beta, "beta");
+	// printArray(beta, "beta");
 
 	vector<myType> x_next(size), x_prev(size);
 	for (int i = 0; i < size; ++i)
@@ -1358,18 +1358,18 @@ void funcWrap(const RSSVectorMyType &a, RSSVectorSmallType &theta, size_t size)
 	for (int i = 0; i < size; ++i)
 		reconst_x[i] = reconst_x[i] + x_prev[i];
 
-	printVector(reconst_x, "reconst_x");
+	// printVector(reconst_x, "reconst_x");
 
 	// Step 3: delta
 	wrap3(x, x_prev, delta, size); // All parties have delta
-	printVector(delta, "delta");
+	// printVector(delta, "delta");
 	PrecomputeObject.getRandomBitShares(eta, size);
-	printArray(eta, "eta");	
+	// printArray(eta, "eta");	
 	// cout << "PC: \t\t" << funcTime(funcPrivateCompare, shares_r, reconst_x, eta, etaPrime, size, BIT_SIZE) << endl;
 	
 	// Step 4: eta
 	funcPrivateCompare(shares_r, reconst_x, eta, etaPrime, size);
-	printVector(etaPrime, "etaPrime");
+	// printVector(etaPrime, "etaPrime");
 
 	// Step 5: theta
 	if (partyNum == PARTY_A)
@@ -1562,9 +1562,11 @@ void funcPow(const RSSVectorMyType &b, vector<smallType> &alpha, size_t size)
 		alpha[i] = 0;
 
 	vector<smallType> r_c(size);
+	vector<myType> r_d(size), r_x(size);
 	//TODO vecrorize this, right now only accepts the first argument
 	for (int j = ell-1; j > -1; --j)
 	{
+		// cout << "alpha: " << (int)alpha[0] << endl;
 		vector<myType> temp_1(size, (1 << ((1 << j) + (int)alpha[0])));
 		funcGetShares(temp, temp_1);
 		subtractVectors<RSSMyType>(x, temp, d, size);
@@ -1575,6 +1577,11 @@ void funcPow(const RSSVectorMyType &b, vector<smallType> &alpha, size_t size)
 			for (int i = 0; i < size; ++i)
 				alpha[i] += (1 << j);
 		}
+	
+		// funcReconstruct(x, r_x, size, "x", true);
+		// cout << "bound_value: " << (int)temp_1[0] << endl;
+		// funcReconstruct(d, r_d, size, "diff", true);
+
 	}
 }
 
@@ -1994,6 +2001,25 @@ void debugReLU()
 	funcReconstruct(a, data_a, size, "a", true);
 	funcReconstruct(b, reconst_b, size, "ReLU", true);
 #endif
+}
+
+
+void debugPow()
+{
+	vector<myType> data_b = {floatToMyType(102)};
+	size_t size = data_b.size();
+	RSSVectorMyType b(size);
+	vector<myType> reconst(size);
+
+	funcGetShares(b, data_b);
+	vector<smallType> alpha_temp(size);
+	funcPow(b, alpha_temp, size);
+
+#if (!LOG_DEBUG)
+	funcReconstruct(b, reconst, size, "b", true);
+	print_myType(reconst[0], "Quotient[0]", "FLOAT");
+	cout << "alpha: " << (int)alpha_temp[0] << endl;
+#endif	
 }
 
 

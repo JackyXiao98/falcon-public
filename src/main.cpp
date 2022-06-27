@@ -93,9 +93,11 @@ int main(int argc, char** argv)
 	cout << "####################### Now debugging #######################" << endl;
 	cout << "#############################################################" << endl;
 
-	debugPC();
+	// debugPC();
 	// debugMatMul();
-	debugWrap();
+	// debugWrap();
+	// debugPow();
+	debugDivision();
 
 
 /****************************** CLEAN-UP ******************************/ 

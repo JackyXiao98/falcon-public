@@ -36,7 +36,7 @@
 #define USING_EIGEN false
 #define PRIME_NUMBER 67
 #define FLOAT_PRECISION 13
-#define PRECISE_DIVISION false
+#define PRECISE_DIVISION true
 
 
 /********************* Neural Network globals *********************/

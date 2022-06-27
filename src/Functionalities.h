@@ -59,6 +59,7 @@ void debugBN();
 void debugSSBits();
 void debugSS();
 void debugMaxpool();
+void debugPow();
 
 
 //Test
