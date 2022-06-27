@@ -9,6 +9,50 @@ using namespace std;
 extern Precompute PrecomputeObject;
 extern string SECURITY_TYPE;
 
+void printArray(RSSVectorMyType array, string name)
+{
+    int size = array.size();
+	cout << name << " " << " First: \n";
+    for (int i = 0; i < size; ++i)
+        cout << (int)array[i].first << " ";
+    cout << endl;
+	cout << name << " " << " Second: \n";
+    for (int i = 0; i < size; ++i)
+        cout << (int)array[i].second << " ";
+    cout << endl;
+}
+
+void printArray(RSSVectorSmallType array, string name)
+{
+    int size = array.size();
+	cout << name << " " << " First: \n";
+    for (int i = 0; i < size; ++i)
+        cout << (int)array[i].first << " ";
+    cout << endl;
+	cout << name << " " << " Second: \n";
+    for (int i = 0; i < size; ++i)
+        cout << (int)array[i].second << " ";
+    cout << endl;
+}
+
+void printVector(vector<smallType> array, string name)
+{
+	int size = array.size();
+	cout << setw(10) << name << ": \t\t ";
+	for (int i = 0; i < size; ++i)
+	cout << (int)array[i] << " ";
+	cout << endl;
+}
+
+void printVector(vector<myType> array, string name)
+{
+	int size = array.size();
+	cout << setw(10) << name << ": \t\t ";
+	for (int i = 0; i < size; ++i)
+	cout << (int)array[i] << " ";
+	cout << endl;
+}
+
 /******************************** Functionalities 2PC ********************************/
 // Share Truncation, truncate shares of a by power (in place) (power is logarithmic)
 void funcTruncate(RSSVectorMyType &a, size_t power, size_t size)
@@ -945,6 +989,7 @@ void funcCrunchMultiply(const RSSVectorSmallType &c, vector<smallType> &betaPrim
 	funcMultiplyNeighbours(c_1, c_2, sizeLong/4);
 	funcMultiplyNeighbours(c_2, c_3, sizeLong/8);
 	funcMultiplyNeighbours(c_3, c_4, sizeLong/16);
+
 	if (BIT_SIZE == 64)
 		funcMultiplyNeighbours(c_4, c_5, sizeLong/32);
 
@@ -958,6 +1003,13 @@ void funcCrunchMultiply(const RSSVectorSmallType &c, vector<smallType> &betaPrim
 			reconst[i] = additionModPrime[reconst[i]][c_5[i].second];
 		}
 	else if (BIT_SIZE == 32)
+	{
+		// cout << "c_0 size: " << c_0.size() << endl;
+		// printArray(c_0, "c_0");
+		// printArray(c_1, "c_1");
+		// printArray(c_2, "c_2");
+		// printArray(c_3, "c_3");
+		// printArray(c_4, "c_4");
 		for (int i = 0; i < size; ++i)
 		{
 			a_prev[i] = 0;
@@ -965,6 +1017,8 @@ void funcCrunchMultiply(const RSSVectorSmallType &c, vector<smallType> &betaPrim
 			reconst[i] = c_4[i].first;
 			reconst[i] = additionModPrime[reconst[i]][c_4[i].second];
 		}
+		// printVector(reconst, "reconst1");
+	}
 
 	thread *threads = new thread[2];
 
@@ -976,7 +1030,7 @@ void funcCrunchMultiply(const RSSVectorSmallType &c, vector<smallType> &betaPrim
 
 	for (int i = 0; i < size; ++i)
 		reconst[i] = additionModPrime[reconst[i]][a_prev[i]];
-
+	// printVector(reconst, "reconst2");
 	for (int i = 0; i < size; ++i)
 	{
 		if (reconst[i] == 0)
@@ -1171,6 +1225,9 @@ void funcPrivateCompare(const RSSVectorSmallType &share_m, const vector<myType> 
 	}
 	else
 	{
+		// cout << "party nubmer in function PC is: " << partyNum <<endl;
+		// printArray(beta, "beta");	
+		// cout << "bit_r" << " \t";
 		for (int index2 = 0; index2 < size; ++index2)
 		{
 			//Computing 2Beta-1
@@ -1187,15 +1244,19 @@ void funcPrivateCompare(const RSSVectorSmallType &share_m, const vector<myType> 
 
 				bit_r = (smallType)((r[index2] >> (BIT_SIZE-1-k)) & 1);
 				diff[index3] = share_m[index3];
-						
+				// cout << (int)bit_r  << " ";
 				if (bit_r == 1)
 					diff[index3] = subConstModPrime(diff[index3], 1);
 			}
 		}
+		// cout << endl;
+		// printArray(twoBetaMinusOne, "2beta-1");
+		// printArray(diff, "diff");
 
 		//(-1)^beta * x[i] - r[i]
 		// (x[i]-r[i]) * (2*beta-1)
 		funcDotProduct(diff, twoBetaMinusOne, xMinusR, sizeLong);
+		// printArray(xMinusR, "xMinusR");
 
 		for (int index2 = 0; index2 < size; ++index2)
 		{
@@ -1239,12 +1300,16 @@ void funcPrivateCompare(const RSSVectorSmallType &share_m, const vector<myType> 
 
 	//TODO 7 rounds of multiplication
 	// cout << "CM: \t\t" << funcTime(funcCrunchMultiply, c, betaPrime, size, dim) << endl;
+	// printArray(c, "c");
 	funcCrunchMultiply(c, betaPrime, size);	
+	// printVector(betaPrime, "betaPrime");
 }
 
 
 
 //Wrap functionality.
+// if L <= a1 + a2 + a3 < 2L, return 1
+// else return 0
 void funcWrap(const RSSVectorMyType &a, RSSVectorSmallType &theta, size_t size)
 {
 	log_print("funcWrap");
@@ -1256,14 +1321,22 @@ void funcWrap(const RSSVectorMyType &a, RSSVectorSmallType &theta, size_t size)
 	vector<myType> reconst_x(size);
 
 	PrecomputeObject.getShareConvertObjects(r, shares_r, alpha, size);
-	addVectors<RSSMyType>(a, r, x, size);
+	printArray(r, "r");
+	printArray(shares_r, "shares_r");
+	printArray(alpha, "alpha");
+
+	// Step 1: x = a + r
+	// here x and r are reversed
+	// addVectors<RSSMyType>(a, r, x, size);
+	// calculate beta using wrap2 function
 	for (int i = 0; i < size; ++i)
 	{
 		beta[i].first = wrapAround(a[i].first, r[i].first);
-		x[i].first = a[i].first + r[i].first;
 		beta[i].second = wrapAround(a[i].second, r[i].second);
+		x[i].first = a[i].first + r[i].first;
 		x[i].second = a[i].second + r[i].second;
 	}
+	printArray(beta, "beta");
 
 	vector<myType> x_next(size), x_prev(size);
 	for (int i = 0; i < size; ++i)
@@ -1281,15 +1354,24 @@ void funcWrap(const RSSVectorMyType &a, RSSVectorSmallType &theta, size_t size)
 		threads[i].join();
 	delete[] threads;
 
+	// Step 2: reconstruct x
 	for (int i = 0; i < size; ++i)
 		reconst_x[i] = reconst_x[i] + x_prev[i];
 
+	printVector(reconst_x, "reconst_x");
+
+	// Step 3: delta
 	wrap3(x, x_prev, delta, size); // All parties have delta
+	printVector(delta, "delta");
 	PrecomputeObject.getRandomBitShares(eta, size);
-
+	printArray(eta, "eta");	
 	// cout << "PC: \t\t" << funcTime(funcPrivateCompare, shares_r, reconst_x, eta, etaPrime, size, BIT_SIZE) << endl;
+	
+	// Step 4: eta
 	funcPrivateCompare(shares_r, reconst_x, eta, etaPrime, size);
+	printVector(etaPrime, "etaPrime");
 
+	// Step 5: theta
 	if (partyNum == PARTY_A)
 	{
 		for (int i = 0; i < size; ++i)
@@ -1788,9 +1870,12 @@ void debugDotProd()
 
 void debugPC()
 {
-	vector<myType> plain_m{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-	vector<myType> plain_r{ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; 
-	vector<smallType> plain_beta{ 1, 0, 1, 0, 0, 0, 1, 1, 0, 1};
+	// vector<myType> plain_m{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	// vector<myType> plain_r{ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1}; 
+	// vector<smallType> plain_beta{ 1, 0, 1, 0, 0, 0, 1, 1, 0, 1};
+	vector<myType> plain_m{ 1, 2, 3};
+	vector<myType> plain_r{ 1, 1, 3}; 
+	vector<smallType> plain_beta{ 0, 0, 0};
 	size_t size = plain_m.size();
 	size_t sizeLong = size*BIT_SIZE;
 	assert(plain_r.size() == plain_m.size() && "Error in debugPC");
@@ -1799,6 +1884,11 @@ void debugPC()
 	vector<smallType> reconst_betaP(size), betaPrime(size);
 	// TODO implement it
 	funcGetShares(beta, plain_beta);
+	// cout << "party nubmer is: " << partyNum <<endl;
+	// cout << "Beta: \t ";
+	// for (int i = 0; i < size; ++i)
+		// cout << "(" << (int)beta[i].first << ", " << (int)beta[i].second << ")" << " ";
+	// cout << endl;
 
 	vector<smallType> bits_of_m(sizeLong);
 	for (int i = 0; i < size; ++i)
@@ -1806,6 +1896,7 @@ void debugPC()
 			bits_of_m[i*BIT_SIZE + j] = (smallType)((plain_m[i] >> (BIT_SIZE-1-j)) & 1);
 
 	funcGetShares(shares_m, bits_of_m);
+	// printArray(shares_m, "shares_m");
 	// plain_r is public
 	funcPrivateCompare(shares_m, plain_r, beta, betaPrime, size);
 	
@@ -1845,6 +1936,7 @@ void debugWrap()
 	a[1] = make_pair(interesting, interesting);
 	interesting += 1;	
 	a[2] = make_pair(interesting, interesting);
+	// mult by 2
 	interesting = ((MINUS_ONE/3) << 1);
 	a[3] = make_pair(interesting, interesting);
 	interesting += 1;	

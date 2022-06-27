@@ -63,8 +63,8 @@ clean: ## Run this to clean all files
 
 ################################# Remote runs ##########################################
 terminal: Falcon.out ## Run this to print the output of (only) Party 0 to terminal
-	./Falcon.out 2 files/IP_$(RUN_TYPE) files/keyC files/keyAC files/keyBC >/dev/null &
-	./Falcon.out 1 files/IP_$(RUN_TYPE) files/keyB files/keyBC files/keyAB >/dev/null &
+	./Falcon.out 1 files/IP_$(RUN_TYPE) files/keyC files/keyAC files/keyBC >/dev/null &
+	./Falcon.out 2 files/IP_$(RUN_TYPE) files/keyB files/keyBC files/keyAB >/dev/null &
 	./Falcon.out 0 files/IP_$(RUN_TYPE) files/keyA files/keyAB files/keyAC 
 	@echo "Execution completed"
 

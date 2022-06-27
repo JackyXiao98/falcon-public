@@ -72,20 +72,20 @@ int main(int argc, char** argv)
 
 	//Run training
 	network += " train";
-	train(net);
+	// train(net);
 
 	//Run inference (possibly with preloading a network)
 	// network += " test";
 	// test(PRELOADING, network, net);
 
-	end_m(network);
-	cout << "----------------------------------------------" << endl;  	
-	cout << "Run details: " << NUM_OF_PARTIES << "PC (P" << partyNum 
-		 << "), " << NUM_ITERATIONS << " iterations, batch size " << MINI_BATCH_SIZE << endl 
-		 << "Running " << security << " " << network << " on " << dataset << " dataset" << endl;
-	cout << "----------------------------------------------" << endl << endl;  
+	// end_m(network);
+	// cout << "----------------------------------------------" << endl;  	
+	// cout << "Run details: " << NUM_OF_PARTIES << "PC (P" << partyNum 
+	// 	 << "), " << NUM_ITERATIONS << " iterations, batch size " << MINI_BATCH_SIZE << endl 
+	// 	 << "Running " << security << " " << network << " on " << dataset << " dataset" << endl;
+	// cout << "----------------------------------------------" << endl << endl;  
 
-	printNetwork(net);
+	// printNetwork(net);
 
 
 /****************************** DEBUG ******************************/ 
@@ -93,17 +93,17 @@ int main(int argc, char** argv)
 	cout << "####################### Now debugging #######################" << endl;
 	cout << "#############################################################" << endl;
 
-	cout << BIT_SIZE << endl;
 	debugPC();
 	// debugMatMul();
+	debugWrap();
 
 
 /****************************** CLEAN-UP ******************************/ 
 	delete aes_indep;
 	delete aes_next;
 	delete aes_prev;
-	delete config;
-	delete net;
+	// delete config;
+	// delete net;
 	deleteObjects();
 
 
