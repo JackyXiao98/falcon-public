@@ -1610,7 +1610,11 @@ void funcDivision(const RSSVectorMyType &a, const RSSVectorMyType &b, RSSVectorM
 	funcGetShares(ones, data_one);
 
 	multiplyByScalar(b, 2, twoX);
+	// w0 = (2.9142 - 2*b)*2^(precision)
 	subtractVectors<RSSMyType>(twoPointNine, twoX, w0, size);
+	// be careful of overflow
+	// b = 2^(3 + 13), w0 = 1.9142*2^(3+13)
+	// b*w0 > 2^32, overflow!
 	funcDotProduct(b, w0, xw0, size, true, precision); 
 	subtractVectors<RSSMyType>(ones, xw0, epsilon0, size);
 	if (PRECISE_DIVISION)
@@ -1625,6 +1629,12 @@ void funcDivision(const RSSVectorMyType &a, const RSSVectorMyType &b, RSSVectorM
 	// RSSVectorMyType scaledA(size);
 	// multiplyByScalar(a, (1 << (alpha + 1)), scaledA);
 	funcDotProduct(answer, a, quotient, size, true, ((2*precision-FLOAT_PRECISION)));	
+
+
+	// vector<myType> placeholder(size);
+	// cout << "precision: " << (int)precision << endl;
+	// funcReconstruct(w0, placeholder, size, "w0", true);
+	// funcReconstruct(xw0, placeholder, size, "xw0", true);
 }
 
 // a is of size batchSize*B, b is of size B and quotient is a/b (b from each group).
@@ -2025,7 +2035,7 @@ void debugPow()
 
 void debugDivision()
 {
-	vector<myType> data_a = {floatToMyType(3.2)}, data_b = {floatToMyType(9.7)};
+	vector<myType> data_a = {floatToMyType(16)}, data_b = {floatToMyType(4)};
 	size_t size = data_a.size();
 	RSSVectorMyType a(size), b(size), quotient(size);
 	vector<myType> reconst(size);
